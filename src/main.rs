@@ -78,29 +78,48 @@ fn count_occurrences(input: &str, desired: char) -> usize {
         .count()
 }
 
-fn day2part1(input: &str) {
+struct Day2Line {
+    num1: usize,
+    num2: usize,
+    c: char,
+    password: String
+}
 
+fn day2parse(input: &str) -> Vec<Day2Line> {
     lazy_static! {
         static ref RE: Regex = Regex::new(r"^([0-9]+)-([0-9]+) ([a-z]): ([a-z]+)$").unwrap();
     }
 
-    let matching_pws: usize = input.lines()
+    input.lines()
         .map(|s| s.trim())
         .filter(|s| !s.is_empty())
         .map(|s| RE.captures(s).and_then(|cap| {
-            let min: usize = cap[1].parse().unwrap();
-            let max: usize = cap[2].parse().unwrap();
+            let num1: usize = cap[1].parse().unwrap();
+            let num2: usize = cap[2].parse().unwrap();
             let c: char = cap[3].parse().unwrap();
             let password = &cap[4];
-            let count = count_occurrences(password, c);
-            if count >= min && count <= max {
+            Some(Day2Line {num1, num2, c, password: String::from(password)})
+        }).unwrap())
+        .collect()
+}
+
+fn day2part1(input: &str) {
+
+    let matching_pws: usize = day2parse(input).iter()
+        .map(|line| {
+            let count = count_occurrences(&line.password, line.c);
+            if count >= line.num1 && count <= line.num2 {
                 Some(1)
             } else {
                 None
             }
-        }))
+        })
         .filter(|x| x.is_some())
         .count();
+
     println!("{:?}", matching_pws);
 
+}
+
+fn day2part2(input: &str) {
 }
