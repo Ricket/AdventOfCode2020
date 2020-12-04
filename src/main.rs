@@ -16,7 +16,7 @@ fn main() {
     let input = fs::read_to_string(input_filename)
         .expect("Something went wrong loading input file");
 
-    day2part1(&input);
+    day2part2(&input);
 }
 
 fn sorted_int_vec(input: &str) -> Vec<i32> {
@@ -122,4 +122,12 @@ fn day2part1(input: &str) {
 }
 
 fn day2part2(input: &str) {
+    let matching_pws: usize = day2parse(input).iter()
+        .filter(|line| {
+            let c1 = line.password.chars().nth(line.num1 - 1).unwrap();
+            let c2 = line.password.chars().nth(line.num2 - 1).unwrap();
+            (c1 == line.c) != (c2 == line.c)
+        })
+        .count();
+    println!("{:?}", matching_pws);
 }
